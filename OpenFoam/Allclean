@@ -13,6 +13,7 @@ rm -f *.obj
 rm -f output/*
 rm -rf constant/extendedFeatureEdgeMesh
 rm -f constant/triSurface/airfoil.eMesh
+rm -f constant/triSurface/airfoil.stl
 
 cd ../airfoil_simpleFoam
 cleanCase

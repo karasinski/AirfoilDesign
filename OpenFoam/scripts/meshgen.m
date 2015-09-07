@@ -31,7 +31,7 @@ ExpArc = 100;         % Expansion rate along the inlet arc
 % ---------------------------------- LICENCE  -------------------------------- %
 %                                                                              %
 %     Copyrighted 2011, 2012 by Håkon Strandenes, hakostra@stud.ntnu.no        %
-%                                                                              % 
+%                                                                              %
 %     This program is free software: you can redistribute it and/or modify     %
 %     it under the terms of the GNU General Public License as published by     %
 %     the Free Software Foundation, either version 3 of the License, or        %
@@ -63,7 +63,7 @@ t = (NACA(3)*10 + NACA(4))/100;
 
 % Calculate thickness
 % The upper expression will give the airfoil a finite thickness at the trailing
-% edge, witch might cause trouble. The lower expression is correxted to give 
+% edge, witch might cause trouble. The lower expression is correxted to give
 % zero thickness at the trailing edge, but the foil is strictly speaking no
 % longer a proper NACA airfoil.
 %
@@ -133,23 +133,23 @@ vertices(11,:) = [Xu(Ni),           W,               -H];
 vertices(12,:) = [D,                W,               -H];
 
 % Create vertices for other side (negative y-axis)
-vertices = [vertices; vertices(:,1), -vertices(:,2), vertices(:,3)]; 
+vertices = [vertices; vertices(:,1), -vertices(:,2), vertices(:,3)];
 
 
 % Edge 4-5 and 16-17
-pts1 = [Xu(2:C_max_idx-1), W*ones(size(Xu(2:C_max_idx-1))), Zu(2:C_max_idx-1)]; 
+pts1 = [Xu(2:C_max_idx-1), W*ones(size(Xu(2:C_max_idx-1))), Zu(2:C_max_idx-1)];
 pts5 = [pts1(:,1), -pts1(:,2), pts1(:,3)];
 
 % Edge 5-7 and 17-19
-pts2 = [Xu(C_max_idx+1:Ni-1), W*ones(size(Xu(C_max_idx+1:Ni-1))), Zu(C_max_idx+1:Ni-1)]; 
+pts2 = [Xu(C_max_idx+1:Ni-1), W*ones(size(Xu(C_max_idx+1:Ni-1))), Zu(C_max_idx+1:Ni-1)];
 pts6 = [pts2(:,1), -pts2(:,2), pts2(:,3)];
 
 % Edge 4-6 and 16-18
-pts3 = [Xl(2:C_max_idx-1), W*ones(size(Xl(2:C_max_idx-1))), Zl(2:C_max_idx-1)]; 
+pts3 = [Xl(2:C_max_idx-1), W*ones(size(Xl(2:C_max_idx-1))), Zl(2:C_max_idx-1)];
 pts7 = [pts3(:,1), -pts3(:,2), pts3(:,3)];
 
 % Edge 6-7 and 18-19
-pts4 = [Xl(C_max_idx+1:Ni-1), W*ones(size(Xl(C_max_idx+1:Ni-1))), Zl(C_max_idx+1:Ni-1)]; 
+pts4 = [Xl(C_max_idx+1:Ni-1), W*ones(size(Xl(C_max_idx+1:Ni-1))), Zl(C_max_idx+1:Ni-1)];
 pts8 = [pts4(:,1), -pts4(:,2), pts4(:,3)];
 
 % Edge 0-1 and 12-13
@@ -192,7 +192,7 @@ fprintf(fo, '// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
 fprintf(fo, '\n');
 fprintf(fo, 'convertToMeters %f; \n', scale);
 fprintf(fo, '\n');
-fprintf(fo, 'vertices \n');       
+fprintf(fo, 'vertices \n');
 fprintf(fo, '( \n');
 fprintf(fo, '    (%f %f %f)\n', vertices');
 fprintf(fo, '); \n');
