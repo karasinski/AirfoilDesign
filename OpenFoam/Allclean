@@ -1,0 +1,33 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/CleanFunctions
+
+cd airfoil_snappyHexMesh
+cleanCase
+foamClearPolyMesh
+foamCleanTutorials
+rm -f 0/*
+rm -f *.obj
+rm -f output/*
+rm -rf constant/extendedFeatureEdgeMesh
+rm -f constant/triSurface/airfoil.eMesh
+
+cd ../airfoil_simpleFoam
+cleanCase
+foamClearPolyMesh
+foamCleanTutorials
+rm -f 0/*
+rm -rf forceCoeffs
+rm -f output/*
+rm -f liftDrag.png
+
+cd ../airfoil_pimpleFoam
+cleanCase
+foamClearPolyMesh
+foamCleanTutorials
+rm -f 0/*
+rm -rf forceCoeffs
+rm -f output/*
+rm -f liftDrag.png
