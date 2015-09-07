@@ -28,7 +28,7 @@ fi
 
 python scripts/NACA2STL.py $foil $alpha_deg
 
-mv scripts/airfoil.stl airfoil_snappyHexMesh/constant/triSurface/.
+mv airfoil.stl airfoil_snappyHexMesh/constant/triSurface/.
 
 # Make 3D mesh in slab of cells.
 cd airfoil_snappyHexMesh
