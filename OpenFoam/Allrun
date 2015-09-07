@@ -1,28 +1,11 @@
 #!/bin/sh
 
-# Determine OpenFOAM version
-OF_MAJOR=`echo $WM_PROJECT_VERSION | cut -d'.' -f1`
-OF_MINOR=`echo $WM_PROJECT_VERSION | cut -d'.' -f2`
-
-# Set variable to distinguish between OF 2.2 and older versions
-if [ $OF_MAJOR -le 2 -a $OF_MINOR -le 1 ]; then
-  OLD=1
-else
-  OLD=0
-fi
-
 # -----------------------------------------------------------------------------
 # Generate airfoil stl
 # Make 3D mesh in slab of cells.
 cd airfoil_snappyHexMesh
 blockMesh > output/1-blockMesh.log 2>&1
-
-if [ $OLD -eq "1" ]; then
-  surfaceFeatureExtract -includedAngle 150 -writeObj constant/triSurface/airfoil.stl airfoil > output/2-surfaceFeatureExtract.log 2>&1
-else
-  surfaceFeatureExtract > output/2-surfaceFeatureExtract.log 2>&1
-fi
-
+surfaceFeatureExtract > output/2-surfaceFeatureExtract.log 2>&1
 snappyHexMesh -overwrite > output/3-snappyHexMesh.log 2>&1
 rm -f 0/*
 
@@ -33,12 +16,7 @@ extrudeMesh > output/1-extrudeMesh.log 2>&1
 rm -f 0/*
 cp 0.org/* 0/
 simpleFoam > output/2-simpleFoam.log 2>&1
-
-if [ $OLD -eq "1" ]; then
-  ./liftDrag-2.1.plot
-else
-  ./liftDrag.plot
-fi
+./liftDrag.plot
 
 # -----------------------------------------------------------------------------
 # Copy the mesh from the steady state case and map the results to a
@@ -50,11 +28,6 @@ cp 0.org/* 0/
 mapFields ../airfoil_simpleFoam -sourceTime latestTime -consistent > output/1-mapFields.log 2>&1
 decomposePar > output/2-decomposePar.log 2>&1
 mpirun -np 4 pimpleFoam -parallel > output/3-pimpleFoam.log 2>&1
-
-if [ $OLD -eq "1" ]; then
-  ./liftDrag-2.1.plot
-else
-  ./liftDrag.plot
-fi
+./liftDrag.plot
 
 reconstructPar

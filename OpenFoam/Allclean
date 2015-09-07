@@ -14,7 +14,6 @@ rm -f output/*
 rm -rf constant/extendedFeatureEdgeMesh
 rm -f constant/triSurface/airfoil.eMesh
 rm -f constant/triSurface/airfoil.stl
-mkdir constant/triSurface
 
 cd ../airfoil_simpleFoam
 cleanCase
