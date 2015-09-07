@@ -105,7 +105,7 @@ def gen_stl(foil="0012", alpha_deg=4):
     tri = (np.array(tri) - 1).tolist()
 
     # Open file
-    with open('airfoil.stl', 'w') as f:
+    with open('airfoil_snappyHexMesh/constant/triSurface/airfoil.stl', 'w') as f:
         f.write('solid airfoil\n')
         for i, _ in enumerate(tri):
             # Calculate normal vector

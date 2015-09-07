@@ -13,23 +13,6 @@ fi
 
 # -----------------------------------------------------------------------------
 # Generate airfoil stl
-# Take inputs and pass along to python script
-if [ "$1" != "" ]
-    then foil=$1
-else
-    foil="0012"
-fi
-
-if [ "$2" != "" ]
-    then alpha_deg=$2
-else
-    alpha_deg=4
-fi
-
-python scripts/NACA2STL.py $foil $alpha_deg
-
-mv airfoil.stl airfoil_snappyHexMesh/constant/triSurface/.
-
 # Make 3D mesh in slab of cells.
 cd airfoil_snappyHexMesh
 blockMesh > output/1-blockMesh.log 2>&1
@@ -42,7 +25,6 @@ fi
 
 snappyHexMesh -overwrite > output/3-snappyHexMesh.log 2>&1
 rm -f 0/*
-
 
 # -----------------------------------------------------------------------------
 # Make a 2D mesh by extruding a patch and solve to steady state.
