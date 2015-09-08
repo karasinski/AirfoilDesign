@@ -14,9 +14,11 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#include        "include/initialConditions"
+
 dimensions      [0 2 -2 0 0 0 0];
 
-internalField   uniform 0.0096;
+internalField   uniform $turbulentKE;
 
 boundaryField
 {
@@ -43,7 +45,7 @@ boundaryField
     {
         type            slip;
     }
-    
+
     defaultPatches
     {
         type            empty;

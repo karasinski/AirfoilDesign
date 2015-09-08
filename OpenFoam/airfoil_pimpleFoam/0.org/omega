@@ -14,9 +14,11 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#include        "include/initialConditions"
+
 dimensions      [0 0 -1 0 0 0 0];
 
-internalField   uniform 9.80;
+internalField   uniform $turbulentOmega;
 
 boundaryField
 {
@@ -43,7 +45,7 @@ boundaryField
     {
         type            zeroGradient;
     }
-    
+
     defaultPatches
     {
         type            empty;

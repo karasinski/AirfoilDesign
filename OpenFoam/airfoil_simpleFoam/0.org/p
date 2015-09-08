@@ -14,9 +14,11 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#include        "include/initialConditions"
+
 dimensions      [0 2 -2 0 0 0 0];
 
-internalField   uniform 0;
+internalField   uniform $pressure;
 
 boundaryField
 {
@@ -40,7 +42,7 @@ boundaryField
     {
         type            slip;
     }
-    
+
     defaultPatches
     {
         type            empty;

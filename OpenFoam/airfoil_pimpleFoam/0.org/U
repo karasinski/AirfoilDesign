@@ -15,9 +15,11 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#include        "include/initialConditions"
+
 dimensions      [0 1 -1 0 0 0 0];
 
-internalField   uniform (2.00 0 0);
+internalField   uniform $flowVelocity;
 
 boundaryField
 {
@@ -44,7 +46,7 @@ boundaryField
     {
         type            slip;
     }
-    
+
     defaultPatches
     {
         type            empty;
