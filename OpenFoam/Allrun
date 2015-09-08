@@ -13,7 +13,7 @@ rm -f 0/*
 # Make a 2D mesh by extruding a patch and solve to steady state.
 cd ../airfoil_simpleFoam
 extrudeMesh > output/1-extrudeMesh.log 2>&1
-rm -f 0/*
+rm -rf 0/*
 cp -r 0.org/* 0/
 simpleFoam > output/2-simpleFoam.log 2>&1
 ./liftDrag.plot
@@ -23,8 +23,8 @@ simpleFoam > output/2-simpleFoam.log 2>&1
 # transient case, then solve transient.
 cd ../airfoil_pimpleFoam
 cp -r ../airfoil_simpleFoam/constant/polyMesh/* constant/polyMesh/
-rm -f 0/*
-cp -r 0.org/* 0/
+rm -rf 0/*
+cp -r ../airfoil_simpleFoam/0.org/* 0/
 mapFields ../airfoil_simpleFoam -sourceTime latestTime -consistent > output/1-mapFields.log 2>&1
 decomposePar > output/2-decomposePar.log 2>&1
 mpirun -np 4 pimpleFoam -parallel > output/3-pimpleFoam.log 2>&1
