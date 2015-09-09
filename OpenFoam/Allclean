@@ -19,16 +19,23 @@ cd ../airfoil_simpleFoam
 cleanCase
 foamClearPolyMesh
 foamCleanTutorials
-rm -f 0/*
+rm -rf 0/*
 rm -rf forceCoeffs
 rm -f output/*
 rm -f liftDrag.png
+
+# Remove generated config
+rm 0.org/include/initialConditions
+rm constant/transportProperties
 
 cd ../airfoil_pimpleFoam
 cleanCase
 foamClearPolyMesh
 foamCleanTutorials
-rm -f 0/*
+rm -rf 0/*
 rm -rf forceCoeffs
 rm -f output/*
 rm -f liftDrag.png
+
+# Remove copied config
+rm constant/transportProperties
