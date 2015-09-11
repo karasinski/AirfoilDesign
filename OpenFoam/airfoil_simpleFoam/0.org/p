@@ -30,7 +30,7 @@ boundaryField
     outlet
     {
         type            fixedValue;
-        value           uniform $internalField;
+        value           $internalField;
     }
 
     "airfoil.*"
