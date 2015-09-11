@@ -5,7 +5,7 @@ import os
 # Chord length
 c = 1
 
-def set_initial_conditions(U=1, pressure=0, turbulentKE=0.0096, turbulentOmega=9.8):
+def set_initial_conditions(U=1, pressure=0, turbulentKE=1e-3, turbulentOmega=1.0):
     values = {'flowVelocity': '(' + "{:.4e}".format(U) + ' 0 0)',
               'pressure': str(pressure),
               'turbulentKE': str(turbulentKE),
@@ -28,7 +28,7 @@ def set_Re(U, Re):
     template_path = path + '.template'
 
     nu = U*c/Re
-    print("Settings:\nReynolds={:.4e}\nVelocity=:{:.4e}\nnu={:.4e}".format(Re, U, nu))
+    print("Settings:\nReynolds={:.4e}\nVelocity={:.4e}\nnu={:.4e}".format(Re, U, nu))
     nu = "{:.4e}".format(nu)
 
     with open(template_path) as f:

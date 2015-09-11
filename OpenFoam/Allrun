@@ -33,3 +33,4 @@ mpirun -np 4 pimpleFoam -parallel > output/3-pimpleFoam.log 2>&1
 ./liftDrag.plot
 
 reconstructPar
+rm -rf processor*/

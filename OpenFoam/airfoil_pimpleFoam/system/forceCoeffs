@@ -20,11 +20,11 @@ forces
 forceCoeffs
 {
     type                forceCoeffs;
-    functionObjectLibs  ( "libforces.so" );
+    functionObjectLibs  ("libforces.so");
     outputControl       timeStep;
     outputInterval      1;
  
-    patches             ( "airfoil.*" );
+    patches             ("airfoil.*");
     pName               p;
     UName               U;
     rhoName             rhoInf;
@@ -35,7 +35,7 @@ forceCoeffs
     CofR                (0.25 0 0);
     pitchAxis           (0 1 0);
      
-    magUInf             2.00;
+    magUInf             1.00;
     rhoInf              1000;
     lRef                1;
     Aref                0.1;

@@ -37,8 +37,10 @@ boundaryField
 
     "airfoil.*"
     {
-        type            kqRWallFunction;
-        value           $internalField;
+        //type            kqRWallFunction;
+        //value           $internalField;
+        type            fixedValue;
+        value           uniform 1e-12;
     }
 
     topAndBottom

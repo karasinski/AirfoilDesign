@@ -20,6 +20,7 @@ def run_case(foil, alpha, Reynolds, U):
     # Save data
     output_dir = os.getcwd() + '/output/' + foil + '/' + str(alpha)
     data = os.getcwd() + '/airfoil_pimpleFoam/'
+    call(["rm", "-rf", output_dir])
     os.makedirs(output_dir)
     time.sleep(1)
     call(['cp', '-r', data, output_dir])
