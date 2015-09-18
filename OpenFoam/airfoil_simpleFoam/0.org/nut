@@ -21,14 +21,10 @@ internalField   uniform 0;
 
 boundaryField
 {
-    "(topAndBottom|inlet|outlet)"
+    "(front|back|topAndBottom|inlet|outlet)"
     {
         type            calculated;
         value           uniform 0;
-    }
-    "(front|back)"
-    {
-        type            empty;
     }
     airfoil
     {
