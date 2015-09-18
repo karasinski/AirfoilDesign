@@ -1,100 +1,49 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
-import pandas as pd
 
+import pandas as pd
 import subprocess
 import glob
 import os
+import argparse
 
 
-delete = True
-
-# XFOIL commands to run
-cmd_template = '''
-$$$NACA_NAME$$$
-PLOP
-G
-
-SAVE
-data/$$$NACA_NAME$$$.foil
-OPER
-ITER
-50
-VPAR
-N 9
-
-VISC 2E5
-PACC
-data/$$$NACA_NAME$$$.dat
-
-ASEQ 0 15 1
-
-QUIT
-'''
-
-# The foils
-# foils = ['0001', '0006', '0009', '0010', '0012', '0015', '0018', '0021', '0025',
-#         '2206', '2209', '2212', '2215', '2218', '2221',
-#         '2306', '2309', '2312', '2315', '2318', '2321',
-#         '2406', '2409', '2412', '2415', '2418', '2421',
-#         '2506', '2509', '2512', '2515', '2518', '2521',
-#         '2606', '2609', '2612', '2615', '2618', '2621',
-#         '2706', '2709', '2712', '2715', '2718', '2721',
-#         '4206', '4209', '4212', '4215', '4218', '4221',
-#         '4306', '4309', '4312', '4315', '4318', '4321',
-#         '4406', '4409', '4412', '4415', '4418', '4421',
-#         '4506', '4509', '4512', '4515', '4518', '4521',
-#         '4606', '4609', '4612', '4615', '4618', '4621',
-#         '4706', '4709', '4712', '4715', '4718', '4721',
-#         '6206', '6209', '6212', '6215', '6218', '6221',
-#         '6306', '6309', '6312', '6315', '6318', '6321',
-#         '6406', '6409', '6412', '6415', '6418', '6421',
-#         '6506', '6509', '6512', '6515', '6518', '6521',
-#         '6606', '6609', '6612', '6615', '6618', '6621',
-#         '6706', '6709', '6712', '6715', '6718', '6721']
-
-foils = ['00' + str(i).zfill(2) for i in range(1, 100)]
-#foils = ['0012']
-
-# Make folder or delete files that exist
-for folder in ['logs', 'data', 'imgs']:
-    try:
-        os.makedirs(folder)
-    except:
-        if delete:
-            filelist = glob.glob(folder + '/*')
+def clean(foil):
+    # Make folder or delete files that exist
+    for folder in ['logs', 'data', 'imgs']:
+        try:
+            os.makedirs(folder)
+        except:
+            filelist = glob.glob(folder + '/*' + foil + '*')
             for f in filelist:
                 os.remove(f)
 
-# If we're not deleting logs then we're continuing with the solutions
-# Find the remaining airfoils to be run
-if not delete:
-    last_log = max(glob.iglob(os.path.join('logs', '*')), key=os.path.getctime)
-    number = last_log.split('/')[1].split('.')[0]
-    foils = foils[foils.index(number) + 1:]
 
-# Run each foil and output log file
-for foil in foils:
-    with open('logs/' + foil + '.log', "a+") as stdout:
+def main(foil, **kwds):
+    # If data from this foil already exists, delete it
+    clean(foil)
+
+    # Run each foil and output log file
+    with open('logs/NACA ' + foil + '.log', 'w') as stdout:
         p = subprocess.Popen('xfoil',
                              stdin=subprocess.PIPE,
                              stdout=stdout)
 
         print(foil)
-        commands = cmd_template.replace('$$$NACA_NAME$$$', 'NACA ' + foil)
+        commands = cmd_template.format(NACA_NAME='NACA ' + foil, **kwds)
         p.stdin.write(bytes(commands, 'UTF-8'))
         p.communicate()[0]
         p.stdin.close()
 
-# Load our data
-files = glob.glob('data/*.dat')
+    return load_data()
 
 
 def load_df(file):
+    # If no data was logged, return an empty DataFrame
     with open(file) as f:
         if len(f.readlines()) < 13:
             return pd.DataFrame()
-    print(file)
+
     df = pd.read_csv(file, header=10, delim_whitespace=True)[1:]
     airfoil = file.split(' ')[1].split('.dat')[0]
     max_camber = airfoil[0]
@@ -104,31 +53,93 @@ def load_df(file):
     df['M'] = max_camber
     df['P'] = max_camber_position
     df['XX'] = thickness
+
+    df = df.convert_objects(convert_numeric=True)
     df['Airfoil'] = airfoil
     return df
 
-data = [load_df(file) for file in files]
-df = pd.concat(data).reset_index(
-    drop=True).convert_objects(convert_numeric=True)
 
-# Find the airfoils with all 15 alpha data points
-full = (df.groupby('Airfoil').count().alpha == 15).reset_index().query('alpha == True').Airfoil.tolist()
-d = df.query("Airfoil in @full")
+def load_data():
+    # Load our data
+    files = glob.glob('data/*.dat')
+    data = [load_df(file) for file in files]
+    df = pd.concat(data).reset_index(drop=True)#.convert_objects(convert_numeric=True)
+    return df
 
-# Some styling
-# sns.set_style('ticks')
 
-# Load data, plot airfoils
-#filelist = glob.glob('data/*.dat')
-# for file in filelist:
-#    f, ax = plt.subplots(figsize=(5, 5))
-#    df = pd.read_csv(file, header=None, skiprows=1, index_col=None, delim_whitespace=True)
-#    name = file.split('.dat')[0]
-#    df.plot(kind='line', x=0, y=1, legend=False)
-#    plt.title(name)
-#    plt.ylim(-0.55, 0.55)
-#    plt.xlim(-0.05, 1.05)
-#    plt.xlabel('')
-#    plt.savefig('imgs/' + name + '.png')
-#    plt.close('all')
-#    plt.clf()
+def plot(foil, df):
+    # Load data, plot airfoil
+    sns.set(style='ticks', context='notebook', font_scale=1.5)
+
+    # Just plot a single foil
+    d = df.query('Airfoil == @foil')
+
+    # If we just ran a single data point, don't plot
+    if len(d) == 1:
+        return
+
+    f, ax = plt.subplots(figsize=(5, 5))
+    d.plot(kind='line', x='CL', y='CD', legend=False)
+    plt.title('NACA ' + foil)
+    plt.xlabel('$C_L$')
+    plt.ylabel('$C_D$')
+    plt.tight_layout()
+    plt.savefig('imgs/NACA ' + foil + '_CL_vs_CD.png')
+    plt.close('all')
+    plt.clf()
+
+    f, ax = plt.subplots(figsize=(5, 5))
+    d.plot(kind='line', x='alpha', y='CL', legend=False)
+    plt.title('NACA ' + foil)
+    plt.ylabel('$C_L$')
+    plt.xlabel('$\\alpha$ (degrees)')
+    plt.tight_layout()
+    plt.savefig('imgs/NACA ' + foil + '_alpha_vs_CL.png')
+    plt.close('all')
+    plt.clf()
+
+
+# XFOIL commands to run
+cmd_template = '''
+{NACA_NAME}
+PLOP
+G
+
+SAVE
+data/{NACA_NAME}.foil
+OPER
+VPAR
+N 9
+
+VISC {Reynolds}
+PACC
+data/{NACA_NAME}.dat
+
+ASEQ {start} {stop} {step}
+
+QUIT
+'''
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Set the foil angle of attack and log results.')
+    parser.add_argument('start', type=int, help='Start angle of sweep.')
+    parser.add_argument('stop', nargs='?', type=int, default=None,
+                        help='End angle of sweep. The sweep does not include this value.')
+    parser.add_argument('step', nargs='?', type=int, default=1,
+                        help='Spacing between values.')
+    parser.add_argument('--foil', '-f', default='0012', help='NACA XXXX foil')
+    parser.add_argument('--Reynolds', '-R', type=float, default=6e6,
+                        help='Reynolds number')
+    parser.add_argument('--plot', '-p', action='store_true',
+                        default=False, help='Plot time results')
+    args = parser.parse_args()
+    if args.stop is None:
+        args.stop = args.start
+
+    # Run main script and optional plot
+    df = main(args.foil,
+              Reynolds=args.Reynolds,
+              start=args.start, stop=args.stop, step=args.step)
+
+    if args.plot:
+        plot(args.foil, df)
